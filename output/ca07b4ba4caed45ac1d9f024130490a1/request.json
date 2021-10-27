@@ -1,0 +1,48 @@
+{
+    "headers": {
+        "accept": "image/png",
+        "content-type": "application/json"
+    },
+    "payload": {
+        "evalscript": "\n    //VERSION=3\n    function setup() {\n    return {\n    input: [{\n    bands: [\"B01\",\"B02\",\"B03\",\"B04\",\"B05\",\"B06\",\"B07\",\"B08\",\"B8A\",\"B09\",\"B10\",\"B11\",\"B12\"]\n    }],\n    output: {\n    bands: 13,\n    sampleType: \"INT16\"\n    }\n    }\n    }\n    function evaluatePixel(sample) {\n    return [sample.B01,\n    sample.B02,\n    sample.B03,\n    sample.B04,\n    sample.B05,\n    sample.B06,\n    sample.B07,\n    sample.B08,\n    sample.B8A,\n    sample.B09,\n    sample.B10,\n    sample.B11,\n    sample.B12];\n    }\n    ",
+        "input": {
+            "bounds": {
+                "bbox": [
+                    9.680457,
+                    55.016284,
+                    10.916419,
+                    55.62884
+                ],
+                "properties": {
+                    "crs": "http://www.opengis.net/def/crs/EPSG/0/4326"
+                }
+            },
+            "data": [
+                {
+                    "dataFilter": {
+                        "mosaickingOrder": "leastCC",
+                        "timeRange": {
+                            "from": "2019-07-28T00:00:00Z",
+                            "to": "2019-08-14T23:59:59Z"
+                        }
+                    },
+                    "type": "sentinel-2-l1c"
+                }
+            ]
+        },
+        "output": {
+            "height": 1160,
+            "responses": [
+                {
+                    "format": {
+                        "type": "image/png"
+                    },
+                    "identifier": "default"
+                }
+            ],
+            "width": 1286
+        }
+    },
+    "timestamp": "2021-10-27T13:25:06.732388",
+    "url": "https://services.sentinel-hub.com/api/v1/process"
+}
