@@ -1,0 +1,58 @@
+version: "3.5"
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:6.2.0
+    ports:
+      - 2181:2181
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    networks:
+      confluent:
+  kafka:
+    image: confluentinc/cp-kafka:6.2.0
+    ports:
+      - 9092:9092
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_PARTITION_ASSIGNMENT_STRATEGY: org.apache.kafka.clients.consumer.RoundRobinAssignor
+    volumes:
+      - confluent_kafka:/var/lib/kafka/data
+    networks:
+      confluent:
+  kowl:
+    image: quay.io/cloudhut/kowl:master
+    ports:
+      - 8080:8080
+    environment:
+      KAFKA_BROKERS: kafka:9092
+    networks:
+      confluent:
+  namenode: #Master (metadata/chunk)
+    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
+    container_name: namenode
+    restart: always
+    ports:
+      - 9870:9870
+      - 9000:9000
+    volumes:
+      - hadoop_namenode:/hadoop/dfs/name
+    environment:
+      - CLUSTER_NAME=test
+    env_file:
+      - ./hadoop.env
+    command: "hdfs dfs -mkdir /data"
+    networks:
+      confluent:
+
+networks:
+  confluent:
+    name: confluent
+
+volumes:
+  confluent_kafka:
+    name: kafka
+  hadoop_namenode:
+    name: namenode
