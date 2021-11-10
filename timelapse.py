@@ -1,24 +1,15 @@
-import datetime as dt
-import json
-import os
-import subprocess
-from concurrent.futures import ProcessPoolExecutor
-from datetime import date, datetime, time, timedelta
-from functools import partial
-from glob import glob
 
-import ffmpeg
-import geopandas as gpd
-import imageio
+import subprocess
+
+from datetime import date, datetime, time, timedelta
+
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
-import shapely
-from ipyleaflet import GeoJSON, Map, basemaps
-from shapely.geometry import Polygon
-from tqdm.auto import tqdm
 
-from eolearn.core import (EOExecutor, EOPatch, EOTask, FeatureType,
+from ipyleaflet import GeoJSON, Map, basemaps
+
+
+from eolearpzt.core import (EOExecutor, EOPatch, EOTask, FeatureType,
                           LinearWorkflow, LoadTask, OverwritePermission,
                           SaveTask, ZipFeatureTask)
 from eolearn.coregistration import ECCRegistration
