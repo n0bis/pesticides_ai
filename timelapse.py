@@ -156,12 +156,6 @@ filter_task = SimpleFilterTask((FeatureType.MASK, 'VALID_DATA'), valid_coverage_
 name = 'clm_service'
 anim_task = AnimateTask(image_dir = './images', out_dir = './animations', out_name=name, duration=5, dpi=200)
 
-params = {'MaxIters': 500}
-coreg_task = ECCRegistration((FeatureType.DATA, 'RGB'), channel=2, params=params)
-
-name = 'clm_service_coreg'
-anim_task_after = AnimateTask(image_dir='./images', out_dir='./animations', out_name=name, duration=5, dpi=200)
-
 workflow = LinearWorkflow(
     download_task,
     add_indices,
