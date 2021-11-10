@@ -2,9 +2,11 @@
 import subprocess
 
 from datetime import date, datetime, time, timedelta
-
+from kafka import KafkaProducer
+from json import dumps
 import matplotlib.pyplot as plt
 import numpy as np
+import base64
 
 from ipyleaflet import GeoJSON, Map, basemaps
 
@@ -25,9 +27,12 @@ config = SHConfig()
 
 #config.sh_client_id = 'c2ddde9c-9bd8-4c8f-a716-2d7426875b24'
 #config.sh_client_secret = 'ksTZi62t[J(R[t%/<t})[Hw3I:;0+dqKNI{23nrw'
-config.sh_client_id = 'e9d24fd0-226a-480c-818f-5bb6b455b7f8'
-config.sh_client_secret = 'Wt%GL/{N*NHNgHuGfN6m|m6O*!%OSa*.YSpX.z:K'
+config.sh_client_id = 'ad7914e4-e35e-479d-9639-544d652a3cbf'
+config.sh_client_secret = 'G?[k1-2<(tjYC0[L(<-&Y8uol8.mQz/X{?n<Iex2'
 config.save()
+
+producer = KafkaProducer(bootstrap_servers=['kafka:9092'],value_serializer=lambda x: 
+                         dumps(x).encode('utf-8'))
 
 
 class AnimateTask(EOTask):
@@ -54,6 +59,7 @@ class AnimateTask(EOTask):
             if self.shape:
                 fig = plt.figure(figsize=(self.shape[0], self.shape[1]))
             image = image[...,0].squeeze()
+            producer.send('images', value=base64.b64encode(image).decode('utf-8'))
             plt.imshow(image)
             plt.axis(False)
             plt.savefig(f'{self.image_dir}/image_{idx:03d}.png', bbox_inches='tight', dpi=self.dpi, pad_inches = self.pad_inches)

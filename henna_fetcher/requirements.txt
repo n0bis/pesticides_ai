@@ -1,0 +1,6 @@
+kafka-python
+matplotlib
+numpy
+ipyleaflet==0.14.0
+sentinelhub==3.4.1
+eo-learn==0.10.1
