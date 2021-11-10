@@ -32,7 +32,7 @@ function SettingsScreen() {
 
   return (
     <View style={styles.container}>
-      <MapView style={styles.map} showsUserLocation />
+      <MapView style={styles.map} showsUserLocation mapType="satellite" />
     </View>
   );
 }
