@@ -7,6 +7,7 @@ from json import dumps
 import matplotlib.pyplot as plt
 import numpy as np
 import base64
+import cv2
 
 from ipyleaflet import GeoJSON, Map, basemaps
 
@@ -31,8 +32,7 @@ config.sh_client_id = 'ad7914e4-e35e-479d-9639-544d652a3cbf'
 config.sh_client_secret = 'G?[k1-2<(tjYC0[L(<-&Y8uol8.mQz/X{?n<Iex2'
 config.save()
 
-producer = KafkaProducer(bootstrap_servers=['kafka:9092'],value_serializer=lambda x: 
-                         dumps(x).encode('utf-8'))
+producer = KafkaProducer(bootstrap_servers=['kafka:9092'],value_serializer='org.apache.kafka.common.serialization.ByteArraySerializer')
 
 
 class AnimateTask(EOTask):
@@ -59,7 +59,8 @@ class AnimateTask(EOTask):
             if self.shape:
                 fig = plt.figure(figsize=(self.shape[0], self.shape[1]))
             image = image[...,0].squeeze()
-            producer.send('images', value=base64.b64encode(image).decode('utf-8'))
+            _, img_buffer_arr = cv2.imencode(".jpg", image)
+            producer.send('images', value=img_buffer_arr.tobytes())
             plt.imshow(image)
             plt.axis(False)
             plt.savefig(f'{self.image_dir}/image_{idx:03d}.png', bbox_inches='tight', dpi=self.dpi, pad_inches = self.pad_inches)

@@ -6,6 +6,7 @@ from PIL import Image
 from StringIO import StringIO
 import base64
 import numpy as np
+import cv2
 locale.getdefaultlocale()
 locale.getpreferredencoding()
 
@@ -33,11 +34,11 @@ df = spark \
   .load()
 
 # Cast to string
-image_bytes = df.selectExpr("CAST(value AS BYTES)")
+image_bytes = df.selectExpr("CAST(value AS STRING)")
 
-decoded = base64.b64decode(image_bytes)
-stream = StringIO(decoded)
-image = Image.open(stream)
-image_np = load_image_into_numpy_array(image)
-stream.close()
-print(image_np)
+# convert image bytes data to numpy array of dtype uint8
+nparr = np.frombuffer(image_bytes.value(), np.uint8)
+
+# decode image
+img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+print(img)

@@ -2,6 +2,9 @@ FROM python:3.7
 
 WORKDIR /usr/src/app
 
+RUN apt-get update ##[edited]
+RUN apt-get install ffmpeg libsm6 libxext6  -y
+
 RUN pip install --upgrade pip
 
 COPY requirements.txt ./

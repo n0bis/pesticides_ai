@@ -124,6 +124,8 @@ services:
     environment:
       KAFKA_BROKERS: kafka:9092
     restart: always
+    depends_on:
+      - kafka
     networks:
       confluent:
 
