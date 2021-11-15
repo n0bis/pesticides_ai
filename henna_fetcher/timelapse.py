@@ -32,7 +32,7 @@ config.sh_client_id = 'ad7914e4-e35e-479d-9639-544d652a3cbf'
 config.sh_client_secret = 'G?[k1-2<(tjYC0[L(<-&Y8uol8.mQz/X{?n<Iex2'
 config.save()
 
-producer = KafkaProducer(bootstrap_servers=['kafka:9092'],value_serializer='org.apache.kafka.common.serialization.ByteArraySerializer')
+producer = KafkaProducer(bootstrap_servers=['host.docker.internal:9092'],value_serializer='org.apache.kafka.common.serialization.ByteArraySerializer')
 
 
 class AnimateTask(EOTask):

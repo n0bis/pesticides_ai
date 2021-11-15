@@ -29,7 +29,7 @@ spark = SparkSession.builder.appName('streamTest') \
 df = spark \
   .readStream \
   .format("kafka") \
-  .option("kafka.bootstrap.servers", "kafka:9092") \
+  .option("kafka.bootstrap.servers", "host.docker.internal:9092") \
   .option("subscribe", "images") \
   .load()
 
