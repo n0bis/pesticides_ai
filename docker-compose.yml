@@ -113,8 +113,6 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_PARTITION_ASSIGNMENT_STRATEGY: org.apache.kafka.clients.consumer.RoundRobinAssignor
-    volumes:
-      - confluent_kafka:/var/lib/kafka/data
     networks:
       confluent:
   kowl:
@@ -142,5 +140,3 @@ volumes:
     name: datanode2
   hadoop_datanode3:
     name: datanode3
-  confluent_kafka:
-    name: kafka
