@@ -5,3 +5,4 @@ ipyleaflet==0.14.0
 sentinelhub==3.4.1
 eo-learn==0.10.1
 opencv-python==4.5.4.58
+confluent-kafka
