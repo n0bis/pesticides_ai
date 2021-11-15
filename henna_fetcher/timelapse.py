@@ -27,11 +27,11 @@ config = SHConfig()
 
 #config.sh_client_id = 'c2ddde9c-9bd8-4c8f-a716-2d7426875b24'
 #config.sh_client_secret = 'ksTZi62t[J(R[t%/<t})[Hw3I:;0+dqKNI{23nrw'
-config.sh_client_id = 'ad7914e4-e35e-479d-9639-544d652a3cbf'
-config.sh_client_secret = 'G?[k1-2<(tjYC0[L(<-&Y8uol8.mQz/X{?n<Iex2'
+config.sh_client_id = 'f938531f-ad28-4e9d-bccc-d43f39658c54'
+config.sh_client_secret = '5&o>M,le~]:@6;-0tWLe::jEx<FA+-5>8vX*<mRG'
 config.save()
 
-producer = KafkaProducer(bootstrap_servers=['kafka:9092'],value_serializer=lambda x: 
+producer = KafkaProducer(bootstrap_servers=['host.docker.internal:9092'],value_serializer=lambda x: 
                          dumps(x).encode('utf-8'))
 
 
