@@ -1,5 +1,6 @@
 from pyspark.sql import SparkSession
 import numpy as np
+import pandas
 
 spark = SparkSession.builder.appName('streamTest') \
     .config('spark.master','spark://spark-master:7077') \
@@ -20,3 +21,8 @@ df = spark \
 # Cast to string
 image_bytes = df.selectExpr("CAST(value AS BINARY)")
 
+query = image_bytes.writeStream.outputMode("append").format("console").start()
+query.awaitTermination()
+
+#df_pd = image_bytes.toPandas()
+#print(df_pd)
