@@ -1,4 +1,6 @@
 from pyspark.sql import SparkSession
+from pyspark.streaming import StreamingContext
+from pyspark.streaming.kafka import KafkaUtils
 import numpy as np
 import pandas
 
@@ -21,8 +23,17 @@ df = spark \
 # Cast to string
 image_bytes = df.selectExpr("CAST(value AS BINARY)")
 
-query = image_bytes.writeStream.outputMode("append").format("console").start()
-query.awaitTermination()
+query = image_bytes \
+  .writeStream \
+  .queryName("Persist data") \
+  .outputMode("append") \
+  .format("parquet") \
+  .option("path", "hdfs://namenode:9000/stream-data/") \
+  .option("checkpointLocation", "hdfs://namenode:9000/stream-checkpoint/") \
+  .partitionBy("window") \
+  .option("truncate", False) \
+  .start() \
+  .awaitTermination()
 
 #df_pd = image_bytes.toPandas()
 #print(df_pd)
