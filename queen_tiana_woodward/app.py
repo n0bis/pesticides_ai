@@ -2,7 +2,6 @@ from pyspark.sql import SparkSession
 from pyspark.streaming import StreamingContext
 from pyspark.streaming.kafka import KafkaUtils
 import numpy as np
-import pandas
 
 spark = SparkSession.builder.appName('streamTest') \
     .config('spark.master','spark://spark-master:7077') \
