@@ -1,7 +1,4 @@
 from pyspark.sql import SparkSession
-from pyspark.streaming import StreamingContext
-from pyspark.streaming.kafka import KafkaUtils
-import numpy as np
 
 spark = SparkSession.builder.appName('streamTest') \
     .config('spark.master','spark://spark-master:7077') \
@@ -29,7 +26,6 @@ query = image_bytes \
   .format("parquet") \
   .option("path", "hdfs://namenode:9000/stream-data/") \
   .option("checkpointLocation", "hdfs://namenode:9000/stream-checkpoint/") \
-  .partitionBy("window") \
   .option("truncate", False) \
   .start() \
   .awaitTermination()
