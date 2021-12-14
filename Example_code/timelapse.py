@@ -23,10 +23,8 @@ from sentinelhub import (CRS, BatchSplitter, BBox, BBoxSplitter,
 
 config = SHConfig()
 
-#config.sh_client_id = 'c2ddde9c-9bd8-4c8f-a716-2d7426875b24'
-#config.sh_client_secret = 'ksTZi62t[J(R[t%/<t})[Hw3I:;0+dqKNI{23nrw'
-config.sh_client_id = 'e9d24fd0-226a-480c-818f-5bb6b455b7f8'
-config.sh_client_secret = 'Wt%GL/{N*NHNgHuGfN6m|m6O*!%OSa*.YSpX.z:K'
+config.sh_client_id = 'ad7914e4-e35e-479d-9639-544d652a3cbf'
+config.sh_client_secret = 'G?[k1-2<(tjYC0[L(<-&Y8uol8.mQz/X{?n<Iex2'
 config.save()
 
 
@@ -43,9 +41,6 @@ class AnimateTask(EOTask):
         self.shape = shape
         
     def execute(self, eopatch):
-        print(eopatch)
-        #print(eopatch.data['indices'][3])
-        #print(eopatch.data['indices'][3][...,0].squeeze())
         images = np.clip(eopatch[self.feature]*self.scale_factor, 0, 1)
         fps = len(images)/self.duration
         subprocess.run(f'rm -rf {self.image_dir} && mkdir {self.image_dir}', shell=True)
@@ -58,22 +53,6 @@ class AnimateTask(EOTask):
             plt.axis(False)
             plt.savefig(f'{self.image_dir}/image_{idx:03d}.png', bbox_inches='tight', dpi=self.dpi, pad_inches = self.pad_inches)
             plt.close()
-        """
-        # video related
-        stream = ffmpeg.input(f'{self.image_dir}/image_*.png', pattern_type='glob', framerate=fps)
-        stream = stream.filter('pad', w='ceil(iw/2)*2', h='ceil(ih/2)*2', color='white')
-        split = stream.split()
-        video = split[0]
-        
-        # gif related
-        palette = split[1].filter('palettegen', reserve_transparent=True, stats_mode='diff')
-        gif = ffmpeg.filter([split[2], palette], 'paletteuse', dither='bayer', bayer_scale=5, diff_mode='rectangle')
-        
-        # save output
-        os.makedirs(self.out_dir, exist_ok=True)
-        video.output(f'{self.out_dir}/{self.out_name}.mp4', crf=15, pix_fmt='yuv420p', vcodec='libx264', an=None).run(overwrite_output=True)
-        gif.output(f'{self.out_dir}/{self.out_name}.gif').run(overwrite_output=True)
-        """
         return eopatch
 
 # https://twitter.com/Valtzen/status/1270269337061019648
@@ -161,9 +140,7 @@ workflow = LinearWorkflow(
     add_indices,
     valid_mask_task,
     filter_task,
-    anim_task,
-    #coreg_task,
-    #anim_task_after
+    anim_task
 )
 
 result = workflow.execute({
