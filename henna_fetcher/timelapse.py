@@ -3,10 +3,13 @@ import subprocess
 
 from datetime import date, datetime, time, timedelta
 from kafka import KafkaProducer
+from confluent_kafka import Producer
 from json import dumps
 import matplotlib.pyplot as plt
 import numpy as np
 import base64
+import cv2
+from producer_config import config as producer_config
 
 from ipyleaflet import GeoJSON, Map, basemaps
 
@@ -31,8 +34,7 @@ config.sh_client_id = 'f938531f-ad28-4e9d-bccc-d43f39658c54'
 config.sh_client_secret = '5&o>M,le~]:@6;-0tWLe::jEx<FA+-5>8vX*<mRG'
 config.save()
 
-producer = KafkaProducer(bootstrap_servers=['host.docker.internal:9092'],value_serializer=lambda x: 
-                         dumps(x).encode('utf-8'))
+producer = Producer(producer_config)
 
 
 class AnimateTask(EOTask):
@@ -48,44 +50,26 @@ class AnimateTask(EOTask):
         self.shape = shape
         
     def execute(self, eopatch):
-        print(eopatch)
-        #print(eopatch.data['indices'][3])
-        #print(eopatch.data['indices'][3][...,0].squeeze())
         images = np.clip(eopatch[self.feature]*self.scale_factor, 0, 1)
-        fps = len(images)/self.duration
         subprocess.run(f'rm -rf {self.image_dir} && mkdir {self.image_dir}', shell=True)
         
         for idx, image in enumerate(images):
             if self.shape:
                 fig = plt.figure(figsize=(self.shape[0], self.shape[1]))
             image = image[...,0].squeeze()
-            producer.send('images', value=base64.b64encode(image).decode('utf-8'))
+            _, img_buffer_arr = cv2.imencode(".jpg", image)
+            producer.produce('images', img_buffer_arr.tobytes())
+            producer.flush()
             plt.imshow(image)
             plt.axis(False)
             plt.savefig(f'{self.image_dir}/image_{idx:03d}.png', bbox_inches='tight', dpi=self.dpi, pad_inches = self.pad_inches)
             plt.close()
-        """
-        # video related
-        stream = ffmpeg.input(f'{self.image_dir}/image_*.png', pattern_type='glob', framerate=fps)
-        stream = stream.filter('pad', w='ceil(iw/2)*2', h='ceil(ih/2)*2', color='white')
-        split = stream.split()
-        video = split[0]
-        
-        # gif related
-        palette = split[1].filter('palettegen', reserve_transparent=True, stats_mode='diff')
-        gif = ffmpeg.filter([split[2], palette], 'paletteuse', dither='bayer', bayer_scale=5, diff_mode='rectangle')
-        
-        # save output
-        os.makedirs(self.out_dir, exist_ok=True)
-        video.output(f'{self.out_dir}/{self.out_name}.mp4', crf=15, pix_fmt='yuv420p', vcodec='libx264', an=None).run(overwrite_output=True)
-        gif.output(f'{self.out_dir}/{self.out_name}.gif').run(overwrite_output=True)
-        """
         return eopatch
 
 # https://twitter.com/Valtzen/status/1270269337061019648
 bbox = BBox(bbox=[9.094491, 55.473442, 9.102162, 55.476142], crs=CRS.WGS84)
 resolution = 1
-time_interval = ('2018-01-01', '2021-11-01')
+time_interval = ('2021-10-01', '2021-11-01')
 print(f'Image size: {bbox_to_dimensions(bbox, resolution)}')
 
 geom, crs = bbox.geometry, bbox.crs
@@ -175,4 +159,4 @@ workflow = LinearWorkflow(
 result = workflow.execute({
     download_task: {'bbox': bbox, 'time_interval': time_interval}
 })
-print(result)
+print(result.eopatch())
