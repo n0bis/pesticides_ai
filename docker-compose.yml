@@ -17,6 +17,17 @@ services:
     networks:
       confluent:
 
+  resourcemanager:
+    image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.2.1-java8
+    container_name: resourcemanager
+    restart: always
+    environment:
+      SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode1:9864"
+    env_file:
+      - ./hadoop.env
+    networks:
+      confluent:
+
   datanode1: #Slave1
     image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
     container_name: datanode1
@@ -32,31 +43,14 @@ services:
     networks:
       confluent:
 
-  datanode2: #Slave2
-    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
-    container_name: datanode2
+  historyserver:
+    image: bde2020/hadoop-historyserver:2.0.0-hadoop3.2.1-java8
+    container_name: historyserver
     restart: always
-    ports:
-      - 9865:9864
-    volumes:
-      - hadoop_datanode2:/hadoop/dfs/data
     environment:
-      SERVICE_PRECONDITION: "namenode:9870"
-    env_file:
-      - ./hadoop.env
-    networks:
-      confluent:
-
-  datanode3: #Slave3
-    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
-    container_name: datanode3
-    restart: always
-    ports:
-      - 9866:9864
+      SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode1:9864 resourcemanager:8088"
     volumes:
-      - hadoop_datanode3:/hadoop/dfs/data
-    environment:
-      SERVICE_PRECONDITION: "namenode:9870"
+      - hadoop_historyserver:/hadoop/yarn/timeline
     env_file:
       - ./hadoop.env
     networks:
@@ -136,7 +130,4 @@ volumes:
     name: namenode
   hadoop_datanode1:
     name: datanode1
-  hadoop_datanode2:
-    name: datanode2
-  hadoop_datanode3:
-    name: datanode3
+  hadoop_historyserver:

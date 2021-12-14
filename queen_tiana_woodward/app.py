@@ -23,6 +23,7 @@ query = image_bytes \
   .writeStream \
   .queryName("Persist data") \
   .outputMode("append") \
+  .trigger(processingTime='5 seconds') \
   .format("parquet") \
   .option("path", "hdfs://namenode:9000/stream-data/") \
   .option("checkpointLocation", "hdfs://namenode:9000/stream-checkpoint/") \

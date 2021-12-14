@@ -50,11 +50,7 @@ class AnimateTask(EOTask):
         self.shape = shape
         
     def execute(self, eopatch):
-        print(eopatch)
-        #print(eopatch.data['indices'][3])
-        #print(eopatch.data['indices'][3][...,0].squeeze())
         images = np.clip(eopatch[self.feature]*self.scale_factor, 0, 1)
-        fps = len(images)/self.duration
         subprocess.run(f'rm -rf {self.image_dir} && mkdir {self.image_dir}', shell=True)
         
         for idx, image in enumerate(images):
@@ -68,22 +64,6 @@ class AnimateTask(EOTask):
             plt.axis(False)
             plt.savefig(f'{self.image_dir}/image_{idx:03d}.png', bbox_inches='tight', dpi=self.dpi, pad_inches = self.pad_inches)
             plt.close()
-        """
-        # video related
-        stream = ffmpeg.input(f'{self.image_dir}/image_*.png', pattern_type='glob', framerate=fps)
-        stream = stream.filter('pad', w='ceil(iw/2)*2', h='ceil(ih/2)*2', color='white')
-        split = stream.split()
-        video = split[0]
-        
-        # gif related
-        palette = split[1].filter('palettegen', reserve_transparent=True, stats_mode='diff')
-        gif = ffmpeg.filter([split[2], palette], 'paletteuse', dither='bayer', bayer_scale=5, diff_mode='rectangle')
-        
-        # save output
-        os.makedirs(self.out_dir, exist_ok=True)
-        video.output(f'{self.out_dir}/{self.out_name}.mp4', crf=15, pix_fmt='yuv420p', vcodec='libx264', an=None).run(overwrite_output=True)
-        gif.output(f'{self.out_dir}/{self.out_name}.gif').run(overwrite_output=True)
-        """
         return eopatch
 
 # https://twitter.com/Valtzen/status/1270269337061019648
@@ -179,4 +159,4 @@ workflow = LinearWorkflow(
 result = workflow.execute({
     download_task: {'bbox': bbox, 'time_interval': time_interval}
 })
-print(result)
+print(result.eopatch())
