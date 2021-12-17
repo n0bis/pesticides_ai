@@ -23,8 +23,9 @@ from sentinelhub import (CRS, BatchSplitter, BBox, BBoxSplitter,
 
 config = SHConfig()
 
-config.sh_client_id = 'ad7914e4-e35e-479d-9639-544d652a3cbf'
-config.sh_client_secret = 'G?[k1-2<(tjYC0[L(<-&Y8uol8.mQz/X{?n<Iex2'
+config.sh_client_id = '7850cd4c-504b-4996-9e2d-9b75dadd9b2a'
+config.sh_client_secret = '26jJvL>j<u_WIl&OP@S]jk|TEU|~mLW3pgH}-RSh'
+# 26jJvL>j<u_WIl&OP@S]jk|TEU|~mLW3pgH}-RSh
 config.save()
 
 
