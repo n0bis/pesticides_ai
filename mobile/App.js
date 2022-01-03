@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect } from "react";
-import MapView from "react-native-maps";
+import MapView, { Marker } from "react-native-maps";
 import { StyleSheet, Text, View, Dimensions } from "react-native";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
@@ -11,7 +11,7 @@ const Tab = createMaterialBottomTabNavigator();
 function HomeScreen() {
   return (
     <View style={styles.container}>
-      <Text>Home text or something</Text>
+      <Text>Semester Project in Scalable Systems</Text>
     </View>
   );
 }
@@ -32,7 +32,38 @@ function SettingsScreen() {
 
   return (
     <View style={styles.container}>
-      <MapView style={styles.map} showsUserLocation mapType="satellite" />
+      <MapView
+        style={styles.map}
+        coordinate={{
+          latitude: 55.475664,
+          longitude: 9.092876,
+          latitudeDelta: 0.0,
+          longitudeDelta: 0.0,
+        }}
+        showsUserLocation
+        mapType="satellite"
+      >
+        <Marker
+          title="Field 1"
+          description="This field is sprayed with pesticides"
+          coordinate={{
+            latitude: 55.38095915335372,
+            longitude: 10.482410924642748,
+            latitudeDelta: 0.0,
+            longitudeDelta: 0.0,
+          }}
+        />
+        <Marker
+          title="Field 2"
+          description="This field is NOT sprayed with pesticides"
+          coordinate={{
+            latitude: 55.35154614509212,
+            longitude: 10.447234064998021,
+            latitudeDelta: 0.0,
+            longitudeDelta: 0.0,
+          }}
+        />
+      </MapView>
     </View>
   );
 }
@@ -41,7 +72,7 @@ function MyTabs() {
   return (
     <NavigationContainer>
       <Tab.Navigator>
-        <Tab.Screen name="Home" component={HomeScreen} />
+        <Tab.Screen name="About" component={HomeScreen} />
         <Tab.Screen name="Map view" component={SettingsScreen} />
       </Tab.Navigator>
     </NavigationContainer>
